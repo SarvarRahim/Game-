@@ -1,0 +1,79 @@
+import pygame
+import random
+import time
+pygame.init()
+
+ekran_eni = 550
+ekran_boyi = 700
+doira_r = 30
+tning_eni = 200
+tning_boyi = 60
+colors = [(100,100,100),(10,200,150)]
+fps = pygame.time.Clock()
+
+
+ekran = pygame.display.set_mode((ekran_eni,ekran_boyi))
+pygame.display.set_caption('Oyin')
+
+font = pygame.font.Font('freesansbold.ttf', 45)
+text = font.render('GAME OVER', True, (255,255,255), (0,0,0))
+textRect = text.get_rect()
+textRect.center = (ekran_eni // 2, ekran_boyi // 2)
+
+class Tortburchak():
+    def __init__(self):
+        self.en = tning_eni
+        self.boy = tning_boyi
+        self.x = ekran_eni // 2
+        self.y = ekran_boyi - self.boy
+    def tortburchak_chiz(self):
+        pygame.draw.rect(ekran,colors[0],[self.x,self.y,self.en,self.boy])
+class Doira():
+    def __init__(self):
+        self.r = doira_r
+        self.x = random.randint(self.r,ekran_eni - self.r)
+        self.y = 0
+    def doira_chiz(self):
+        pygame.draw.circle(ekran,colors[0],[self.x,self.y],self.r)
+
+t1 = Tortburchak()
+d1 = Doira()
+birlik = 0
+while True:
+    d1.y += 20
+
+    if d1.y >= ekran_boyi:
+        d1.y = 0
+        d1.x = random.randint(d1.r,ekran_eni - d1.r)
+
+    for event in pygame.event.get():
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                birlik = -20
+            elif event.key == pygame.K_RIGHT:
+                birlik = 20
+
+            if event.key == pygame.K_q:
+                pygame.quit()
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                birlik = 0
+    ekran.fill(colors[1])
+    if t1.x + birlik < 0 or t1.x + birlik + tning_eni > ekran_eni:
+        print("Ozingni bos")
+    else:
+        t1.x += birlik
+
+    if d1.y > ekran_boyi - tning_boyi:
+        if d1.x >= t1.x and d1.x <= t1.x + tning_eni:
+            ekran.blit(text, textRect)
+            #time.sleep(1)
+            pygame.time.delay(1000)
+
+
+    t1.tortburchak_chiz()
+    d1.doira_chiz()
+    pygame.display.update()
+    fps.tick(30)
+
